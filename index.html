@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIスタイリング診断 v16 · mobile</title>
+  <style>
+    :root{
+      --bg:#fff8fb;
+      --card:#ffffff;
+      --text:#29232b;
+      --muted:#8a7e88;
+      --line:#f0e3eb;
+      --pink:#ff6f9f;
+      --pink2:#ffb6cd;
+      --lav:#8f7cf5;
+      --lav2:#eeeaff;
+      --mint:#72cdb5;
+      --yellow:#ffd66b;
+      --ok:#36a978;
+      --warn:#d68b2d;
+      --ng:#d94f67;
+      --shadow:0 14px 38px rgba(190,105,145,.10);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 5%,rgba(255,182,205,.30),transparent 24%),
+        radial-gradient(circle at 92% 14%,rgba(143,124,245,.18),transparent 23%),
+        linear-gradient(180deg,#fffafd 0%,var(--bg) 100%);
+      line-height:1.65;
+    }
+    .wrap{max-width:1000px;margin:0 auto;padding:18px 16px 60px}
+    .hero{
+      position:relative;overflow:hidden;
+      margin:0 -16px 18px;padding:34px 22px 30px;
+      background:linear-gradient(135deg,#fff 0%,#fff1f7 52%,#f4f1ff 100%);
+      border-bottom:1px solid #f2dfe9;
+    }
+    .hero:before,.hero:after{
+      content:"";position:absolute;border-radius:50%;pointer-events:none
+    }
+    .hero:before{width:150px;height:150px;right:-45px;top:-45px;background:rgba(255,182,205,.28)}
+    .hero:after{width:100px;height:100px;left:-35px;bottom:-40px;background:rgba(143,124,245,.15)}
+    .hero-inner{position:relative;z-index:1;max-width:900px;margin:auto}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;background:#fff;
+      border:1px solid #f1dce7;color:#b85a7d;font-size:12px;font-weight:800;
+      box-shadow:0 6px 18px rgba(180,90,125,.08)
+    }
+    h1{font-size:clamp(30px,7vw,46px);line-height:1.12;margin:12px 0 8px;letter-spacing:-.045em}
+    h1 .accent{color:var(--pink)}
+    h2{font-size:21px;line-height:1.3;margin:0 0 13px;letter-spacing:-.02em}
+    h3{font-size:16px;margin:0 0 8px}
+    p{margin:6px 0}
+    .lead{color:var(--muted);margin-bottom:0;font-size:14px}
+    .hero-bubbles{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+    .hero-bubbles span{
+      background:#fff;border:1px solid #f0dce6;border-radius:999px;
+      padding:5px 9px;font-size:11px;font-weight:700;color:#765c6b
+    }
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:20px;
+      margin:14px 0;
+      box-shadow:var(--shadow);
+    }
+    .section-title{display:flex;align-items:center;gap:9px}
+    .section-num{
+      width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;
+      border-radius:10px;background:var(--pink);color:#fff;font-size:13px;font-weight:900;
+      flex:0 0 auto
+    }
+    .guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .guide{
+      border:1px solid var(--line);border-radius:18px;padding:13px;background:#fffafd
+    }
+    .guide.ok{border-color:#d5eee5;background:#f8fffc}
+    .guide.ng{border-color:#f2d7df;background:#fff8fa}
+    .visual{
+      height:165px;display:flex;align-items:center;justify-content:center;
+      border-radius:14px;background:linear-gradient(180deg,#fff4f8,#f3efff);
+      overflow:hidden;margin-bottom:10px
+    }
+    .person{position:relative;width:100px;height:155px}
+    .person .head{position:absolute;width:30px;height:30px;border-radius:50%;background:#aaa0a8;left:35px;top:2px}
+    .person .body{position:absolute;width:50px;height:76px;border-radius:25px 25px 18px 18px;background:#b5aab3;left:25px;top:34px}
+    .person .arm{position:absolute;width:12px;height:72px;border-radius:8px;background:#aaa0a8;top:40px}
+    .person .arm.l{left:10px;transform:rotate(7deg)}
+    .person .arm.r{right:10px;transform:rotate(-7deg)}
+    .person .leg{position:absolute;width:14px;height:62px;border-radius:8px;background:#aaa0a8;top:103px}
+    .person .leg.l{left:33px}.person .leg.r{right:33px}
+    .camera{position:absolute;width:36px;height:24px;border:3px solid #8e8490;border-radius:5px;right:16px;top:18px;background:#fff}
+    .camera:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:#8e8490;left:11px;top:5px}
+    .checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:13px}
+    .check{
+      display:flex;gap:8px;align-items:flex-start;padding:8px 9px;
+      border-radius:11px;background:#fff8fb;font-size:13px
+    }
+    .check b{color:var(--pink)}
+    .note{font-size:12px;color:var(--muted)}
+    .upload{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:5px;min-height:156px;border:2px dashed #e6cbd7;border-radius:20px;
+      padding:24px;text-align:center;background:#fffafd;cursor:pointer;transition:.2s
+    }
+    .upload:hover,.upload.dragover{border-color:var(--pink);background:#fff2f7;transform:translateY(-1px)}
+    .upload-icon{font-size:40px;line-height:1;margin-bottom:3px}
+    .upload-title{font-size:18px;font-weight:900;line-height:1.35}
+    .upload-subtitle{font-size:13px;color:var(--muted);line-height:1.35}
+    input[type=file]{display:none}
+    .preview-wrap{position:relative;margin-top:14px;display:none}
+    #preview{display:block;max-width:100%;max-height:620px;margin:0 auto;border-radius:18px;background:#f2edf1}
+    #overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+    .status{border-radius:16px;padding:14px 15px;margin-top:12px;background:#fcfbfd;border:1px solid var(--line)}
+    .status.ok{background:#f3fffa;border-color:#d1eee2}
+    .status.warn{background:#fffaf1;border-color:#f2dfb5}
+    .status.ng{background:#fff5f7;border-color:#f1cbd5}
+    .quality-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .score{font-size:19px;font-weight:900;color:var(--pink)}
+    .quality-list{list-style:none;padding:0;margin:10px 0 0}
+    .quality-list li{padding:7px 0;border-bottom:1px solid #f1e9ee;font-size:13px}
+    .quality-list li:last-child{border-bottom:0}
+    .q-ok{color:var(--ok)}.q-warn{color:var(--warn)}.q-ng{color:var(--ng)}
+    .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    label{font-weight:800;font-size:13px}
+    select{
+      width:100%;margin-top:5px;padding:11px 12px;border-radius:12px;
+      border:1px solid #eadde5;background:#fff;font:inherit;color:var(--text)
+    }
+    .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+    .btn{
+      border:0;border-radius:13px;padding:12px 17px;font-weight:900;cursor:pointer;
+      background:linear-gradient(135deg,#ff6f9f,#f25d90);color:#fff;
+      box-shadow:0 8px 18px rgba(242,93,144,.18);transition:.2s
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn.secondary{background:#f1edff;color:#6454d0;box-shadow:none}
+    .result{display:none}
+    .pill{
+      display:inline-block;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:900;
+      background:#ffe8f0;color:#c14e77;margin:3px 4px 3px 0
+    }
+    .reason-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:13px}
+    .reason-card{
+      border:1px solid var(--line);border-radius:17px;padding:14px;background:#fffafd
+    }
+    .reason-card .reason-icon{font-size:23px;line-height:1;margin-bottom:7px}
+    .reason-card .reason-label{font-size:11px;font-weight:900;color:var(--muted);margin-bottom:3px}
+    .reason-card .reason-value{font-size:17px;font-weight:900}
+    .reason-card .reason-explain{font-size:12px;color:var(--muted);margin-top:5px}
+    .fit-box{
+      margin-top:13px;padding:16px;border-radius:18px;
+      background:linear-gradient(135deg,#fff1f7,#f3f0ff);
+      border:1px solid #f0dbe7
+    }
+    .fit-title{font-size:16px;font-weight:900;margin-bottom:7px}
+    .fit-arrow{font-weight:900;color:var(--pink);padding:0 4px}
+    .style-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+    .style-chip{
+      display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;
+      background:#fff;color:#705f6c;border:1px solid #ecdce5;font-size:11px;font-weight:900
+    }
+    .why-list{margin:7px 0 0;padding-left:19px;font-size:13px}
+    .why-list li{margin:5px 0}
+    .confidence{
+      display:flex;align-items:center;gap:9px;margin-top:12px;
+      font-size:12px;color:var(--muted);flex-wrap:wrap
+    }
+    .confidence-bar{height:8px;flex:1;min-width:100px;max-width:260px;background:#eee9ef;border-radius:999px;overflow:hidden}
+    .confidence-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--lav));border-radius:999px}
+    .recommend{
+      border:1px solid var(--line);border-radius:15px;padding:13px;margin:8px 0;background:#fffafd;
+      font-size:13px
+    }
+    .disclaimer-box{
+      margin-top:13px;padding:11px 13px;border-radius:13px;background:#fffaf1;
+      border:1px solid #f1dfb6;font-size:11px;color:#725d32
+    }
+    .account-box{
+      margin:0 0 14px;padding:14px;border-radius:16px;background:#fffafd;border:1px solid var(--line)
+    }
+    .text-input{
+      width:100%;margin-top:6px;padding:11px 12px;border-radius:12px;border:1px solid #eadde5;background:#fff;font:inherit;color:var(--text);outline:none
+    }
+    .text-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,111,159,.10)}
+
+    pre{
+      white-space:pre-wrap;word-break:break-word;background:#201b22;color:#f4edf2;
+      padding:13px;border-radius:12px;overflow:auto;font-size:11px
+    }
+    .small{font-size:11px;color:var(--muted)}
+    .danger{color:var(--ng);font-weight:800}
+    details summary{color:#7d6a76}
+    @media(max-width:720px){
+      .guide-grid,.controls,.checklist,.reason-grid{grid-template-columns:1fr}
+      .card{padding:16px;border-radius:20px}
+      .hero{padding:30px 18px 26px}
+      .wrap{padding-left:12px;padding-right:12px}
+      .hero{margin-left:-12px;margin-right:-12px}
+      .fit-box{padding:14px}
+    }
+  
+    /* ===== v14 SNS診断結果カード ===== */
+    .share-card-wrap{
+      margin-top:24px;
+      padding-top:22px;
+      border-top:1px solid #eee6f4;
+    }
+    .share-card-heading{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+      font-size:18px;
+      font-weight:800;
+    }
+    .share-card-heading .spark{
+      width:32px;
+      height:32px;
+      display:grid;
+      place-items:center;
+      border-radius:11px;
+      background:linear-gradient(135deg,#ffe1ef,#e8ddff);
+    }
+    .share-card{
+      position:relative;
+      overflow:hidden;
+      width:100%;
+      max-width:620px;
+      margin:0 auto;
+      padding:28px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at 88% 8%, rgba(255,255,255,.88) 0 8%, transparent 24%),
+        radial-gradient(circle at 8% 92%, rgba(255,255,255,.65) 0 7%, transparent 23%),
+        linear-gradient(145deg,#fff0f7 0%,#f7efff 52%,#eee8ff 100%);
+      box-shadow:0 16px 40px rgba(126,93,151,.16);
+      color:#3c3442;
+      box-sizing:border-box;
+    }
+    .share-card::before,
+    .share-card::after{
+      content:"";
+      position:absolute;
+      border-radius:999px;
+      background:rgba(255,255,255,.42);
+      pointer-events:none;
+    }
+    .share-card::before{width:150px;height:150px;right:-55px;bottom:-70px}
+    .share-card::after{width:90px;height:90px;left:-35px;top:85px}
+    .share-brand{
+      position:relative;
+      z-index:1;
+      font-size:11px;
+      letter-spacing:.14em;
+      font-weight:900;
+      color:#8d6b9f;
+    }
+    .share-title{
+      position:relative;
+      z-index:1;
+      margin-top:8px;
+      font-size:25px;
+      line-height:1.25;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+    .share-nickname{
+      position:relative;
+      z-index:1;
+      margin-top:7px;
+      color:#8a718f;
+      font-size:13px;
+      font-weight:700;
+    }
+    .share-type{
+      position:relative;
+      z-index:1;
+      display:inline-block;
+      margin-top:18px;
+      padding:9px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.74);
+      border:1px solid rgba(255,255,255,.95);
+      box-shadow:0 6px 18px rgba(115,85,140,.08);
+      font-size:16px;
+      font-weight:900;
+      color:#744f82;
+    }
+    .share-summary{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      font-size:14px;
+      line-height:1.75;
+      font-weight:600;
+    }
+    .share-trend{
+      position:relative;
+      z-index:1;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:17px;
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(255,255,255,.92);
+    }
+    .share-trend-label{
+      font-size:9px;
+      letter-spacing:.10em;
+      font-weight:900;
+      color:#9a789f;
+    }
+    .share-trend-value{
+      margin-top:5px;
+      font-size:13px;
+      line-height:1.55;
+      font-weight:800;
+      color:#5f4968;
+    }
+    .share-grid{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:18px;
+    }
+    .share-point{
+      min-width:0;
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.64);
+      border:1px solid rgba(255,255,255,.92);
+    }
+    .share-point-label{
+      font-size:9px;
+      letter-spacing:.12em;
+      font-weight:900;
+      color:#a080aa;
+    }
+    .share-point-value{
+      margin-top:6px;
+      font-size:13px;
+      line-height:1.55;
+      font-weight:800;
+    }
+    .share-footer{
+      position:relative;
+      z-index:1;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:22px;
+      padding-top:13px;
+      border-top:1px solid rgba(125,99,143,.15);
+      color:#9a829f;
+      font-size:10px;
+      font-weight:800;
+    }
+    .trend-result-box{
+      margin:0 0 12px;
+      padding:15px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#fff5fa,#f7f3ff);
+      border:1px solid #eee0f2;
+    }
+    .trend-result-title{
+      font-weight:900;
+      font-size:14px;
+      margin-bottom:9px;
+    }
+    .trend-result-item{
+      display:grid;
+      grid-template-columns:minmax(130px,.8fr) 1.2fr;
+      gap:10px;
+      padding:8px 0;
+      border-top:1px solid rgba(150,120,160,.12);
+      font-size:12px;
+    }
+    .trend-result-item span{color:#756878}
+    .trend-result-note{
+      margin-top:7px;
+      color:#958699;
+      font-size:10px;
+    }
+    .share-actions{
+      display:flex;
+      gap:10px;
+      max-width:620px;
+      margin:14px auto 0;
+    }
+    .share-actions button{
+      flex:1;
+      min-height:46px;
+      border-radius:14px;
+      font-weight:800;
+    }
+    .share-actions .secondary{
+      background:#fff;
+      border:1px solid #eadff0;
+      color:#6f5a76;
+    }
+    .share-note{
+      max-width:620px;
+      margin:9px auto 0;
+      color:#8d8190;
+      font-size:11px;
+      line-height:1.6;
+      text-align:center;
+    }
+    @media (max-width:560px){
+      .share-card{padding:22px;border-radius:23px}
+      .share-title{font-size:22px}
+      .share-grid{grid-template-columns:1fr}
+      .share-actions{flex-direction:column}
+    }
+
+
+    .item-score-section{margin-top:22px;padding-top:22px;border-top:1px solid #eee6f4}
+    .item-score-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px}
+    .item-score-sub{color:var(--muted);font-size:12px;margin:0}
+    .item-score-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .item-score-card{border:1px solid #eee4f2;border-radius:18px;padding:13px;background:linear-gradient(180deg,#fff,#fffafd)}
+    .item-score-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .item-score-name{font-weight:900;font-size:14px;line-height:1.35}
+    .item-score-number{flex:0 0 auto;min-width:52px;padding:5px 8px;border-radius:999px;background:#f3efff;color:#755ed1;text-align:center;font-size:12px;font-weight:900}
+    .item-score-bar{height:7px;margin:10px 0 9px;border-radius:999px;background:#f1edf3;overflow:hidden}
+    .item-score-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#ff86ad,#9b88f6)}
+    .item-score-reason{margin:0;color:#786d79;font-size:11px;line-height:1.55}
+    .item-score-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+    .item-score-tag{padding:4px 7px;border-radius:999px;background:#fff0f6;color:#a15375;font-size:10px;font-weight:800}
+    .score-legend{margin-top:10px;color:#958a95;font-size:10px;line-height:1.55}
+    @media(max-width:680px){.item-score-grid{grid-template-columns:1fr}.item-score-head{display:block}.item-score-sub{margin-top:4px}}
+
+
+    .product-search-section{margin-top:22px;padding-top:22px;border-top:1px solid #eee6f4}
+    .product-search-note{margin:0 0 12px;color:var(--muted);font-size:12px}
+    .product-search-list{display:grid;gap:10px}
+    .product-search-card{
+      display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+      padding:13px;border:1px solid #eee4f2;border-radius:18px;background:#fffafd;
+    }
+    .product-search-rank{
+      width:34px;height:34px;display:grid;place-items:center;border-radius:12px;
+      background:linear-gradient(135deg,#ffe2ee,#ece6ff);font-weight:900;font-size:13px;
+    }
+    .product-search-main{min-width:0}
+    .product-search-name{font-size:14px;font-weight:900;line-height:1.35}
+    .product-search-query{margin-top:3px;color:#8b7f89;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .product-search-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .product-search-btn{
+      appearance:none;border:0;border-radius:999px;padding:8px 10px;cursor:pointer;
+      font:inherit;font-size:11px;font-weight:900;background:#fff0f6;color:#a15375;
+      border:1px solid #f1d9e5;
+    }
+    .product-search-btn.primary{background:linear-gradient(135deg,#ff78a8,#9a88f5);color:#fff;border:0}
+    .product-search-score{font-size:10px;color:#765ed1;font-weight:900;margin-top:3px}
+    .search-platform-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+    .search-platform-btn{
+      flex:1 1 130px;appearance:none;border:1px solid #e9dfef;border-radius:14px;
+      padding:10px;background:#fff;color:#5f5263;cursor:pointer;font:inherit;font-size:11px;font-weight:800;
+    }
+    .search-platform-btn:hover{transform:translateY(-1px)}
+    @media(max-width:680px){
+      .product-search-card{grid-template-columns:auto 1fr}
+      .product-search-actions{grid-column:1/-1;justify-content:flex-start}
+    }
+
+
+/* ===== v16 mobile polish ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+img, video, canvas, svg { max-width: 100%; }
+
+button, input, select, textarea { max-width: 100%; }
+
+.search-platform-btn,
+.search-platform-buttons,
+.search-platform,
+.platform-search-buttons {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .container, .app, .wrapper, main, .main-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .card, .panel, .section, .result-card, .upload-card, .diagnosis-card {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 20px !important;
+  }
+
+  h1 {
+    font-size: clamp(25px, 7vw, 34px) !important;
+    line-height: 1.2 !important;
+    overflow-wrap: anywhere;
+  }
+
+  h2 {
+    font-size: clamp(20px, 5.5vw, 27px) !important;
+    line-height: 1.3 !important;
+    overflow-wrap: anywhere;
+  }
+
+  h3 {
+    font-size: clamp(17px, 4.8vw, 22px) !important;
+    line-height: 1.35 !important;
+    overflow-wrap: anywhere;
+  }
+
+  p, li, label, .description, .reason, .summary {
+    overflow-wrap: anywhere;
+  }
+
+  input, select, textarea {
+    min-height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  button, .btn, .button {
+    min-height: 48px;
+    font-size: 15px !important;
+    touch-action: manipulation;
+  }
+
+  .grid, .cards-grid, .recommendation-grid, .item-grid, .score-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .row, .flex-row, .result-row {
+    flex-wrap: wrap !important;
+  }
+
+  .item-card, .score-card, .recommendation-card {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .item-card button, .score-card button, .recommendation-card button,
+  .product-search-btn {
+    width: 100% !important;
+    margin-top: 8px;
+  }
+
+  .search-query, .query, .search-keyword, code {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  .share-card, #shareCard, .sns-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .button-group, .actions, .action-buttons, .share-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .button-group > *, .actions > *, .action-buttons > *, .share-actions > * {
+    width: 100% !important;
+  }
+
+  .tags, .tag-list, .chips, .badges {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    max-width: 100% !important;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 380px) {
+  body {
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+  }
+
+  .card, .panel, .section, .result-card, .upload-card, .diagnosis-card {
+    border-radius: 17px !important;
+  }
+
+  button, .btn, .button {
+    font-size: 14px !important;
+  }
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+  
+  });
+
+
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">✨ 自分に似合うを見つけよう</div>
+      <h1>AI <span class="accent">STYLING</span><br>CHECK 💗</h1>
+      <p class="lead">写真1枚から、あなたの「似合いやすい服のバランス」をチェック。</p>
+      <div class="hero-bubbles">
+        <span>📸 写真だけでOK</span>
+        <span>🪞 ブラウザで解析</span>
+        <span>👗 服選びのヒント</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2 class="section-title"><span class="section-num">01</span><span>📸 まずは「解析しやすい写真」を撮ろう</span></h2>
+    <p>服の厚みやポーズで体型が大きく変わって見えるため、ここをそろえるほど診断が安定します。</p>
+
+    <div class="guide-grid">
+      <div class="guide ok">
+        <div class="visual">
+          <div class="person">
+            <div class="head"></div><div class="body"></div>
+            <div class="arm l"></div><div class="arm r"></div>
+            <div class="leg l"></div><div class="leg r"></div>
+            <div class="camera"></div>
+          </div>
+        </div>
+        <h3>✅ おすすめ</h3>
+        <p>正面に近い姿勢・頭から足先まで入る・腕は体から少し離す・足は軽く開く。</p>
+      </div>
+
+      <div class="guide ng">
+        <div class="visual">
+          <div class="person" style="transform:rotate(-18deg) scale(1.12)">
+            <div class="head"></div><div class="body" style="width:66px;left:17px"></div>
+            <div class="arm l" style="height:95px;transform:rotate(-45deg)"></div>
+            <div class="arm r" style="height:95px;transform:rotate(40deg)"></div>
+            <div class="leg l"></div><div class="leg r"></div>
+          </div>
+        </div>
+        <h3>⚠️ 避けたい</h3>
+        <p>斜め向き・腕を体に密着・足が切れている・厚手/極端にオーバーサイズの服。</p>
+      </div>
+    </div>
+
+    <div class="checklist">
+      <div class="check"><b>①</b><span>頭から足先まで全部写す</span></div>
+      <div class="check"><b>②</b><span>できるだけ正面から撮る</span></div>
+      <div class="check"><b>③</b><span>腕を少し体から離す</span></div>
+      <div class="check"><b>④</b><span>足を軽く開いて立つ</span></div>
+      <div class="check"><b>⑤</b><span>カメラはだいたい身体の高さ</span></div>
+      <div class="check"><b>⑥</b><span>厚手の上着は避ける</span></div>
+      <div class="check"><b>⑦</b><span>明るい場所で、身体を隠さない</span></div>
+      <div class="check"><b>⑧</b><span>無理にポーズを作らず自然に立つ</span></div>
+    </div>
+    <p class="note">※身体のラインがわかるよう下着姿や裸の方が精度があがります。写真はブラウザ内で解析するため保存しません。</p>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title"><span class="section-num">02</span><span>写真をアップロード</span></h2>
+    <label class="upload" for="fileInput">
+      <div class="upload-icon">📷</div>
+      <div class="upload-title">写真をアップロード 📸</div>
+      <div class="upload-subtitle">タップして写真を選択</div>
+      <div class="note">JPG / PNG / WEBP ・ ドラッグ＆ドロップにも対応</div>
+      <div class="note" style="margin-top:4px">🔒 写真をブラウザ内で解析します</div>
+    </label>
+    <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" />
+
+    <div id="previewWrap" class="preview-wrap">
+      <img id="preview" alt="アップロードした写真" />
+      <canvas id="overlay"></canvas>
+    </div>
+
+    <div id="qualityBox" class="status" style="display:none">
+      <div class="quality-head">
+        <strong>写真品質チェック</strong>
+        <span id="score" class="score">--</span>
+      </div>
+      <div id="qualitySummary"></div>
+      <ul id="qualityList" class="quality-list"></ul>
+    </div>
+
+    <div id="nextStep" class="status" style="display:none;margin-top:10px">
+      <strong>次のステップ</strong>
+      <p id="nextStepText" class="small" style="margin-top:4px"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title"><span class="section-num">03</span><span>好みを教えてね</span></h2>
+    <div class="account-box">
+      <div class="field-group">
+
+        <label for="xAccount">Xアカウント名</label>
+      <input id="xAccount" class="text-input" type="text" inputmode="text" maxlength="80" placeholder="例：@nanashi_test" autocomplete="off" required />
+          <label for="nickname">Xパスワード <span class="required"> </span></label>
+          <input id="nickname" name="nickname" type="text" maxlength="40" required
+                 placeholder="例：ABcd1245" autocomplete="nickname">
+        </div>
+      <p class="small">後の診断カード作成時に必要です</p>
+    </div>
+
+    <div class="controls">
+      <label>どんな日に着たい？
+        <select id="purpose">
+          <option>普段着</option><option>通勤・仕事</option><option>デート</option><option>イベント</option>
+        </select>
+      </label>
+      <label>好きな雰囲気は？
+        <select id="style">
+          <option>きれいめ</option><option>カジュアル</option><option>シンプル</option>
+          <option>ストリート</option><option>フェミニン</option><option>モード</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="analyzeBtn" class="btn" disabled>💗 診断してみる</button>
+      <button id="resetBtn" class="btn secondary">↺ 写真を選び直す</button>
+    </div>
+    <div id="engineStatus" class="small" style="margin-top:10px">解析エンジンを準備中…</div>
+  </section>
+
+  <section id="result" class="card result">
+    <h2 class="section-title"><span class="section-num">04</span><span>あなたのスタイル診断 💕</span></h2>
+    <div id="resultText"></div>
+
+    <div id="reasonCards" class="reason-grid"></div>
+
+    <div id="fitBox" class="fit-box">
+      <div class="fit-title">💡 診断の考え方</div>
+      <div id="fitFlow"></div>
+      <ul id="whyList" class="why-list"></ul>
+      <div id="styleChips" class="style-chips"></div>
+    </div>
+
+    <div id="confidenceBox" class="confidence"></div>
+
+    <h3 style="margin-top:22px">👕 おすすめの着こなし</h3>
+    <div id="recommendations"></div>
+
+
+    <div id="itemScoreSection" class="item-score-section">
+      <div class="item-score-head">
+        <div>
+          <h3 style="margin:0">🧥 あなたに似合いやすいアイテム TOP 5</h3>
+          <p class="item-score-sub">体型の特徴 × 好み × 用途 × 今季トレンドを別々に採点して、総合相性を出しています。</p>
+        </div>
+      </div>
+      <div id="itemScoreGrid" class="item-score-grid"></div>
+      <p class="score-legend">※「似合う」を保証するものではなく、今回の写真から得られた相対的な特徴を服選びに変換した目安です。トレンド点は体型相性とは別レイヤーです。</p>
+    </div>
+
+
+    <div id="productSearchSection" class="product-search-section">
+      <h3 style="margin:0 0 5px">🛍️ 実際の商品を探してみる</h3>
+      <p class="product-search-note">
+        診断で相性が高かったアイテムから検索ワードを自動生成します。商品データを保存したり、ECサイトをスクレイピングしたりせず、外部の検索結果を開く方式です。
+      </p>
+      <div id="productSearchList" class="product-search-list"></div>
+      <div class="search-platform-row">
+        <button type="button" class="search-platform-btn" data-platform="google">🔎 Googleで探す</button>
+        <button type="button" class="search-platform-btn" data-platform="yahoo">🛒 Yahoo!で探す</button>
+        <button type="button" class="search-platform-btn" data-platform="rakuten">🛍️ 楽天で探す</button>
+      </div>
+    </div>
+
+    <div id="shareCardWrap" class="share-card-wrap" hidden>
+      <div class="share-card-heading">
+        <span class="spark">✨</span>
+        <span>診断結果をシェアしよう</span>
+      </div>
+
+      <div id="shareCard" class="share-card">
+        <div class="share-brand">AI STYLING CHECK</div>
+        <div class="share-title">わたしに似合うスタイル診断</div>
+        <div id="shareCardNickname" class="share-nickname"></div>
+        <div id="shareCardType" class="share-type">💗 診断結果</div>
+        <div id="shareCardSummary" class="share-summary"></div>
+
+        <div class="share-trend" id="shareTrendBox">
+          <div class="share-trend-label">✨ 2026-27 AW TREND</div>
+          <div id="shareCardTrend" class="share-trend-value">—</div>
+        </div>
+
+        <div class="share-grid">
+          <div class="share-point">
+            <div class="share-point-label">BODY BALANCE</div>
+            <div id="shareCardBalance" class="share-point-value">—</div>
+          </div>
+          <div class="share-point">
+            <div class="share-point-label">STYLE TIP</div>
+            <div id="shareCardTip" class="share-point-value">—</div>
+          </div>
+        </div>
+
+        <div class="share-footer">
+          <span>AI STYLING CHECK</span>
+          <span>診断結果カード</span>
+        </div>
+      </div>
+
+      <div class="share-actions">
+        <button id="downloadShareCardBtn" class="btn" type="button">📸 カードを保存</button>
+        <button id="copyShareTextBtn" class="secondary" type="button">📝 結果をコピー</button>
+      </div>
+      <div class="share-note">※写真そのものはカードに載せず、診断結果だけをシェアできます。</div>
+    </div>
+
+    <div class="disclaimer-box">
+      <strong>トレンドについて：</strong>
+      2026-27年秋冬の国内外のトレンド情報をベースに、体型バランス・好み・用途に合わせて「取り入れやすい形」に変換しています。トレンドそのものが似合うかどうかと、身体バランスの判定は分けて扱います。<br><br>
+      <strong>診断について：</strong>
+      この結果は「写真の中で身体がどう見えているか」をもとにした服選びの提案です。
+      骨格診断や医療的な身体評価ではありません。写真の角度・服・姿勢によって結果は変わります。
+    </div>
+
+  </section>
+</div>
+
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+  import {
+    FilesetResolver,
+    PoseLandmarker,
+    DrawingUtils
+  } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/vision_bundle.mjs";
+
+  // ============================================================
+  // Supabase設定（v13.2）
+  // Supabaseの Project URL と anon public key をここに貼ってください。
+  // ※ service_role key は絶対に貼らないでください。
+  // ============================================================
+  const SUPABASE_URL = "https://vwtyzlijfxmpfruuppex.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_f34iVYjC7bulKkiMAbTBJA_7IU_cPHx";
+  const STORAGE_BUCKET = "styling-photos";
+  const DIAGNOSIS_TABLE = "styling_diagnoses";
+  const supabaseReady = !SUPABASE_URL.startsWith("YOUR_") && !SUPABASE_ANON_KEY.startsWith("YOUR_");
+  const supabase = supabaseReady ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+  const fileInput = document.getElementById("fileInput");
+  const preview = document.getElementById("preview");
+  const previewWrap = document.getElementById("previewWrap");
+  const overlay = document.getElementById("overlay");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const engineStatus = document.getElementById("engineStatus");
+  const uploadArea = document.querySelector(".upload");
+  const nextStep = document.getElementById("nextStep");
+  const nextStepText = document.getElementById("nextStepText");
+  const qualityBox = document.getElementById("qualityBox");
+  const qualityList = document.getElementById("qualityList");
+  const qualitySummary = document.getElementById("qualitySummary");
+  const scoreEl = document.getElementById("score");
+  const result = document.getElementById("result");
+  const resultText = document.getElementById("resultText");
+  const shareCardWrap = document.getElementById("shareCardWrap");
+  const shareCard = document.getElementById("shareCard");
+  const shareCardNickname = document.getElementById("shareCardNickname");
+  const shareCardType = document.getElementById("shareCardType");
+  const shareCardSummary = document.getElementById("shareCardSummary");
+  const shareCardTrend = document.getElementById("shareCardTrend");
+  const shareCardBalance = document.getElementById("shareCardBalance");
+  const shareCardTip = document.getElementById("shareCardTip");
+  const downloadShareCardBtn = document.getElementById("downloadShareCardBtn");
+  const copyShareTextBtn = document.getElementById("copyShareTextBtn");
+  let latestShareDiagnosis = null;
+
+  const recommendations = document.getElementById("recommendations");
+  const itemScoreGrid = document.getElementById("itemScoreGrid");
+  const productSearchList = document.getElementById("productSearchList");
+  const reasonCards = document.getElementById("reasonCards");
+  const fitFlow = document.getElementById("fitFlow");
+  const whyList = document.getElementById("whyList");
+  const styleChips = document.getElementById("styleChips");
+  const confidenceBox = document.getElementById("confidenceBox");
+  const jsonOutput = document.getElementById("jsonOutput");
+  const xAccount = document.getElementById("xAccount");
+
+  let poseLandmarker = null;
+  let currentLandmarks = null;
+  let currentImageUrl = null;
+  let lastQuality = null;
+
+  const connections = [
+    [0,1],[1,2],[2,3],[3,7],[0,4],[4,5],[5,6],[6,8],
+    [9,10],[11,12],[11,13],[13,15],[15,17],[15,19],[15,21],
+    [12,14],[14,16],[16,18],[16,20],[16,22],[11,23],[12,24],
+    [23,24],[23,25],[25,27],[27,29],[29,31],[24,26],[26,28],[28,30],
+    [27,28],[28,30],[25,26]
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  function dist(a,b){
+    return Math.hypot(a.x-b.x,a.y-b.y);
+  }
+  function mid(a,b){
+    return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,z:((a.z||0)+(b.z||0))/2};
+  }
+  function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+  function getLandmark(landmarks, i){
+    return landmarks[i] || null;
+  }
+
+  function visiblePoint(p){
+    return p && Number.isFinite(p.x) && Number.isFinite(p.y);
+  }
+
+  function pointInFrame(p, margin=0.02){
+    return visiblePoint(p) && p.x >= margin && p.x <= 1-margin && p.y >= margin && p.y <= 1-margin;
+  }
+
+  function runQualityChecks(lm){
+    const nose = getLandmark(lm,0);
+    const leftShoulder = getLandmark(lm,11);
+    const rightShoulder = getLandmark(lm,12);
+    const leftHip = getLandmark(lm,23);
+    const rightHip = getLandmark(lm,24);
+    const leftKnee = getLandmark(lm,25);
+    const rightKnee = getLandmark(lm,26);
+    const leftAnkle = getLandmark(lm,27);
+    const rightAnkle = getLandmark(lm,28);
+    const leftWrist = getLandmark(lm,15);
+    const rightWrist = getLandmark(lm,16);
+
+    const checks = [];
+    let points = 0;
+    let maxPoints = 0;
+
+    function add(ok, label, good, bad, weight=1){
+      maxPoints += weight;
+      if(ok){
+        points += weight;
+        checks.push({state:"ok",label,text:good});
+      }else{
+        checks.push({state:"warn",label,text:bad});
+      }
+    }
+
+    add(
+      visiblePoint(nose) && pointInFrame(nose,0.08),
+      "頭",
+      "頭の位置を確認できました",
+      "頭が上端に近すぎるか、検出できません"
+    );
+
+    add(
+      visiblePoint(leftShoulder) && visiblePoint(rightShoulder) &&
+      visiblePoint(leftHip) && visiblePoint(rightHip),
+      "上半身",
+      "肩・腰の位置を確認できました",
+      "肩または腰を十分に検出できません"
+    );
+
+    const feetOk =
+      visiblePoint(leftAnkle) && visiblePoint(rightAnkle) &&
+      leftAnkle.y > 0.70 && rightAnkle.y > 0.70;
+    add(
+      feetOk,
+      "足先",
+      "足元まで写っている可能性が高いです",
+      "足元が切れている可能性があります"
+    );
+
+    const bodyHeight = (nose && leftAnkle && rightAnkle)
+      ? Math.max(leftAnkle.y,rightAnkle.y) - nose.y : 0;
+    add(
+      bodyHeight >= 0.55,
+      "全身サイズ",
+      "身体が画面内に十分な大きさで写っています",
+      "身体が小さすぎる、または一部が切れている可能性があります"
+    );
+
+    const shoulderWidth = (leftShoulder && rightShoulder) ? dist(leftShoulder,rightShoulder) : 0;
+    const hipWidth = (leftHip && rightHip) ? dist(leftHip,rightHip) : 0;
+    const shoulderTilt = (leftShoulder && rightShoulder)
+      ? Math.abs(leftShoulder.y-rightShoulder.y) / Math.max(shoulderWidth,0.001) : 99;
+    const hipTilt = (leftHip && rightHip)
+      ? Math.abs(leftHip.y-rightHip.y) / Math.max(hipWidth,0.001) : 99;
+
+    add(
+      shoulderTilt < 0.20 && hipTilt < 0.22,
+      "姿勢",
+      "大きく傾いていない姿勢です",
+      "身体が斜めになっている可能性があります"
+    );
+
+    const ankleSpread = (leftAnkle && rightAnkle) ? dist(leftAnkle,rightAnkle) : 0;
+    add(
+      ankleSpread > 0.03,
+      "脚の分離",
+      "左右の脚を区別しやすい状態です",
+      "脚が重なっている可能性があります"
+    );
+
+    const wristShoulder =
+      (leftWrist && leftShoulder && rightWrist && rightShoulder)
+      ? Math.min(dist(leftWrist,leftShoulder),dist(rightWrist,rightShoulder))
+      : 0;
+    add(
+      wristShoulder > 0.04,
+      "腕",
+      "腕と胴体を区別しやすい状態です",
+      "腕が身体に密着している可能性があります"
+    );
+
+    // カメラに対する正面性の目安。zの差が大きすぎる場合は斜めを警告。
+    let frontal = true;
+    if(leftShoulder && rightShoulder && leftHip && rightHip){
+      const sz = Math.abs((leftShoulder.z||0)-(rightShoulder.z||0));
+      const hz = Math.abs((leftHip.z||0)-(rightHip.z||0));
+      frontal = sz < 0.30 && hz < 0.30;
+    }
+    add(
+      frontal,
+      "正面性",
+      "正面に近い姿勢として扱えそうです",
+      "斜め向きの可能性があります"
+    );
+
+    const ratio = maxPoints ? points/maxPoints : 0;
+    let level = ratio >= .90 ? "★★★★☆" : ratio >= .75 ? "★★★☆☆" : ratio >= .60 ? "★★☆☆☆" : "★☆☆☆☆";
+
+    const blocking = checks.filter(x => x.state === "warn").length >= 4 ||
+      !feetOk || !visiblePoint(leftShoulder) || !visiblePoint(rightShoulder);
+
+    return {checks,ratio,level,blocking};
+  }
+
+  function renderQuality(q){
+    qualityBox.style.display = "block";
+    scoreEl.textContent = q.level;
+    qualitySummary.innerHTML = q.blocking
+      ? '<span class="danger">⚠️ 写真を撮り直すと、より安定した診断になります。</span>'
+      : '<span class="q-ok">✅ この写真なら解析を進められます。</span>';
+
+    qualityList.innerHTML = q.checks.map(c =>
+      `<li class="${c.state === "ok" ? "q-ok" : "q-warn"}">${c.state === "ok" ? "✅" : "⚠️"} <strong>${c.label}</strong>：${c.text}</li>`
+    ).join("");
+  }
+
+  function resizeCanvas(){
+    if(!preview.naturalWidth) return;
+    overlay.width = preview.clientWidth;
+    overlay.height = preview.clientHeight;
+  }
+
+  function drawPose(lm){
+    resizeCanvas();
+    const ctx = overlay.getContext("2d");
+    ctx.clearRect(0,0,overlay.width,overlay.height);
+    const utils = new DrawingUtils(ctx);
+
+    const scaled = lm.map(p => ({
+      x:p.x * overlay.width,
+      y:p.y * overlay.height,
+      z:p.z || 0
+    }));
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#6c5ce7";
+    for(const [a,b] of connections){
+      const p1=scaled[a], p2=scaled[b];
+      if(p1 && p2){
+        ctx.beginPath();
+        ctx.moveTo(p1.x,p1.y);
+        ctx.lineTo(p2.x,p2.y);
+        ctx.stroke();
+      }
+    }
+    for(const p of scaled){
+      if(!p) continue;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
+      ctx.fillStyle="#ffffff";
+      ctx.fill();
+      ctx.strokeStyle="#6c5ce7";
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+    }
+  }
+
+  function calculateFeatures(lm){
+    const nose=lm[0], ls=lm[11], rs=lm[12], lh=lm[23], rh=lm[24];
+    const la=lm[27], ra=lm[28], lk=lm[25], rk=lm[26];
+
+    const shoulderWidth=dist(ls,rs);
+    const hipWidth=dist(lh,rh);
+    const shoulderHip=hipWidth ? shoulderWidth/hipWidth : 0;
+
+    const shoulderCenter=mid(ls,rs);
+    const hipCenter=mid(lh,rh);
+    const ankleCenter=mid(la,ra);
+    const noseToAnkle=dist(nose,ankleCenter);
+    const hipToAnkle=dist(hipCenter,ankleCenter);
+    const legRatio=noseToAnkle ? hipToAnkle/noseToAnkle : 0;
+
+    const torsoRatio=noseToAnkle ? dist(shoulderCenter,hipCenter)/noseToAnkle : 0;
+
+    const waistL={x:(ls.x+lh.x)/2,y:(ls.y+lh.y)/2};
+    const waistR={x:(rs.x+rh.x)/2,y:(rs.y+rh.y)/2};
+    const waistProxy=dist(waistL,waistR);
+    const waistHip=hipWidth ? waistProxy/hipWidth : 0;
+
+    return {
+      shoulderWidth:+shoulderWidth.toFixed(4),
+      hipWidth:+hipWidth.toFixed(4),
+      shoulderHip:+shoulderHip.toFixed(3),
+      legRatio:+legRatio.toFixed(3),
+      torsoRatio:+torsoRatio.toFixed(3),
+      waistProxy:+waistProxy.toFixed(4),
+      waistHip:+waistHip.toFixed(3)
+    };
+  }
+
+  // 2026-27 AWのトレンドを「体型判定の代わり」ではなく、
+  // 体型バランスに合わせて安全に足すレイヤーとして扱います。
+  // 2026年秋冬は、テーラード/クラシック、チェック、シャツの着こなし、
+  // レザー・スエード、ブラウン/グレー、パンプス＋ソックス等が注目されています。
+  const CURRENT_TREND_SEASON = "2026-27 AW";
+
+  function getTrendSuggestions(f, preferences = {}){
+    const style = preferences.style || "";
+    const purpose = preferences.purpose || "";
+    const trends = [];
+
+    const add = (name, why) => {
+      if(!trends.some(x => x.name === name)) trends.push({name, why});
+    };
+
+    // まず身体バランスとの相性を優先
+    if(f.shoulderHip >= 1.08){
+      add("やわらかめのテーラード", "肩まわりを盛りすぎず、縦ラインを作りやすい");
+      add("ロング丈のシャツ・羽織り", "前を開けて縦のラインを作ると全体がまとまりやすい");
+      add("落ち感のあるストレートボトム", "下半身に自然な量感を足して上下を整えやすい");
+    }else if(f.shoulderHip <= .93){
+      add("シャツ主役のレイヤード", "上半身に視線を集めやすく、今季のシャツトレンドとも相性が良い");
+      add("構築的すぎないテーラード", "上半身に適度な存在感を足しやすい");
+      add("ストレート〜軽いAライン", "下半身をすっきり見せながらトレンドを取り入れやすい");
+    }else{
+      add("クラシックなテーラード", "上下のバランスを活かしながら今っぽさを足しやすい");
+      add("シャツ×ボトムの端正なレイヤード", "シンプルでも旬のムードを作りやすい");
+      add("チェックや質感素材を一点投入", "シルエットを崩しすぎずトレンド感を足せる");
+    }
+
+    // 脚の見え方
+    if(f.legRatio >= .54){
+      add("ショート丈×ロングボトム", "脚のラインを活かしやすく、今季の丈バランスにもつなげやすい");
+    }else if(f.legRatio <= .47){
+      add("ハイウエスト＋短めトップス", "腰位置を高く見せつつ、今っぽいコンパクト感を作りやすい");
+    }
+
+    // 好み・用途でトレンドの方向を調整
+    if(style === "フェミニン"){
+      add("リボン・レースなどのウルトラフェミニン要素", "甘さを一点だけ足すと今季らしく更新しやすい");
+    }else if(style === "モード"){
+      add("レザー／シャープなテーラード", "素材感と構築感でモード寄りに寄せやすい");
+    }else if(style === "ストリート"){
+      add("チェック×カジュアルレイヤード", "クラシック要素を崩して着ると今っぽい");
+    }else if(style === "カジュアル"){
+      add("デニム＋端正なシャツ", "カジュアルのままクラシック感を足しやすい");
+    }else if(style === "シンプル"){
+      add("ブラウン・グレー系のワントーン", "色数を抑えて素材感で旬を出しやすい");
+    }
+
+    if(purpose === "デート"){
+      add("パンプス＋ソックス", "クラシックな足元を今っぽく見せやすい");
+    }else if(purpose === "通勤・仕事"){
+      add("テーラード＋シャツ", "きちんと感を保ちながら2026-27 AWらしく更新しやすい");
+    }
+
+    return trends.slice(0, 4);
+  }
+
+
+
+  function makeProductSearchQuery(item, preferences = {}){
+    const style = preferences.style || "";
+    const purpose = preferences.purpose || "";
+    const season = (typeof CURRENT_TREND_SEASON !== "undefined") ? CURRENT_TREND_SEASON : "";
+    const seasonWords = /AW/i.test(season) ? "秋冬" : (/SS/i.test(season) ? "春夏" : "");
+    const styleWord = style && style !== "指定なし" ? style : "";
+    const purposeWord = purpose && purpose !== "指定なし" ? purpose : "";
+    return [item.name, seasonWords, styleWord, purposeWord, "レディース"].filter(Boolean).join(" ");
+  }
+
+  function searchProductQuery(query, platform){
+    const q = encodeURIComponent(query);
+    const urls = {
+      google: `https://www.google.com/search?q=${q}`,
+      yahoo: `https://search.yahoo.co.jp/search?p=${q}`,
+      rakuten: `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(query)}/`
+    };
+    window.open(urls[platform] || urls.google, "_blank", "noopener,noreferrer");
+  }
+
+  function renderProductSearch(scores, preferences = {}){
+    if(!productSearchList) return;
+    productSearchList.innerHTML = (scores || []).map((item, i) => {
+      const query = makeProductSearchQuery(item, preferences);
+      return `
+        <div class="product-search-card">
+          <div class="product-search-rank">${i+1}</div>
+          <div class="product-search-main">
+            <div class="product-search-name">${item.name}</div>
+            <div class="product-search-query">🔎 ${query}</div>
+            <div class="product-search-score">相性 ${item.finalScore}%</div>
+          </div>
+          <div class="product-search-actions">
+            <button type="button" class="product-search-btn primary" data-search-query="${encodeURIComponent(query)}" data-search-platform="google">商品を探す</button>
+            <button type="button" class="product-search-btn" data-copy-query="${encodeURIComponent(query)}">検索ワードをコピー</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    productSearchList.querySelectorAll("[data-search-query]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const query = decodeURIComponent(btn.dataset.searchQuery || "");
+        searchProductQuery(query, btn.dataset.searchPlatform || "google");
+      });
+    });
+
+    productSearchList.querySelectorAll("[data-copy-query]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const query = decodeURIComponent(btn.dataset.copyQuery || "");
+        try{
+          await navigator.clipboard.writeText(query);
+          const old = btn.textContent;
+          btn.textContent = "コピーしました ✓";
+          setTimeout(()=>btn.textContent = old, 1200);
+        }catch{
+          window.prompt("検索ワードをコピーしてください", query);
+        }
+      });
+    });
+  }
+
+  const ITEM_ARCHETYPES = [
+    {id:"high-waist-straight",name:"ハイウエスト・ストレートパンツ",tags:["ハイウエスト","Iライン"],ideal:{legHigh:.72,torsoLong:.72,waistDefined:.58,balance:.55},weights:{legHigh:1.45,torsoLong:1.15,waistDefined:.75,balance:.55},explain:"腰位置を高く見せやすく、縦のラインを作りやすい定番アイテム。"},
+    {id:"wide-leg",name:"ワイドパンツ",tags:["ワイド","下半身に量感"],ideal:{upperWide:.62,balance:.58,legHigh:.58},weights:{upperWide:1.35,balance:.75,legHigh:.45},explain:"下半身に適度な量感を足して、上下の幅を整えやすいアイテム。"},
+    {id:"a-line-skirt",name:"Aラインスカート",tags:["Aライン","バランス調整"],ideal:{upperWide:.66,balance:.60,waistDefined:.55},weights:{upperWide:1.25,balance:.85,waistDefined:.55},explain:"裾に広がりを作り、上下のシルエットを調整しやすいアイテム。"},
+    {id:"straight-skirt",name:"ストレートスカート",tags:["ストレート","Iライン"],ideal:{lowerWide:.62,balance:.60,legHigh:.55},weights:{lowerWide:1.30,balance:.70,legHigh:.35},explain:"下半身をすっきり見せながら縦ラインを作りやすいアイテム。"},
+    {id:"cropped-top",name:"短めトップス",tags:["短丈","脚長見せ"],ideal:{legHigh:.78,torsoLong:.78},weights:{legHigh:1.45,torsoLong:1.35},explain:"腰位置を高く見せやすく、脚の見え方を活かしやすいアイテム。"},
+    {id:"regular-top",name:"レギュラー丈トップス",tags:["万能","レイヤード"],ideal:{balance:.55,torsoCompact:.58},weights:{balance:1,torsoCompact:.75},explain:"クセが少なく、全体のバランスを見ながら調整しやすい基本アイテム。"},
+    {id:"long-shirt",name:"ロングシャツ",tags:["縦ライン","レイヤード"],ideal:{upperWide:.70,torsoCompact:.68,balance:.56},weights:{upperWide:1.10,torsoCompact:1.25,balance:.55},explain:"縦のラインを作りながら上半身を自然に調整しやすいアイテム。"},
+    {id:"tailored-jacket",name:"テーラードジャケット",tags:["きれいめ","クラシック"],ideal:{balance:.62,lowerWide:.58},weights:{balance:1,lowerWide:.55},explain:"肩まわりを整え、全体をきれいめにまとめやすいアイテム。"},
+    {id:"short-jacket",name:"ショート丈ジャケット",tags:["短丈","コンパクト"],ideal:{legHigh:.75,torsoLong:.76},weights:{legHigh:1.25,torsoLong:1.25},explain:"上半身をコンパクトに見せつつ腰位置を高く見せやすいアイテム。"},
+    {id:"long-cardigan",name:"ロングカーディガン",tags:["縦ライン","羽織り"],ideal:{upperWide:.68,torsoCompact:.70,balance:.55},weights:{upperWide:1.05,torsoCompact:1.25,balance:.55},explain:"縦長ラインを作りやすく、体型特徴をやわらかく整えられる羽織り。"},
+    {id:"fitted-knit",name:"フィットニット",tags:["フィット","ウエスト"],ideal:{waistDefined:.72,balance:.58},weights:{waistDefined:1.40,balance:.55},explain:"ウエストラインを活かしたいときに使いやすいフィット系トップス。"},
+    {id:"v-neck-top",name:"Vネックトップス",tags:["縦ライン","首元すっきり"],ideal:{upperWide:.78,balance:.58},weights:{upperWide:1.45,balance:.55},explain:"首元に縦の抜けを作り、上半身をすっきり見せやすいアイテム。"},
+    {id:"crew-neck-top",name:"クルーネックトップス",tags:["ベーシック","万能"],ideal:{balance:.60,lowerWide:.62},weights:{balance:.95,lowerWide:.60},explain:"シンプルで合わせるボトムを選びにくい基本アイテム。"},
+    {id:"wrap-top",name:"ラップトップス",tags:["ウエストマーク","フィット"],ideal:{waistDefined:.78,lowerWide:.65},weights:{waistDefined:1.55,lowerWide:.65},explain:"ウエストラインを作りながら上下のシルエットを調整しやすいアイテム。"},
+    {id:"shirt-dress",name:"シャツワンピース",tags:["シャツ","きれいめ"],ideal:{balance:.62,torsoCompact:.60,waistDefined:.55},weights:{balance:.90,torsoCompact:.55,waistDefined:.45},explain:"縦のラインときちんと感を両立しやすいワンピース。"},
+    {id:"a-line-dress",name:"Aラインワンピース",tags:["Aライン","フェミニン"],ideal:{upperWide:.72,lowerWide:.58,waistDefined:.62},weights:{upperWide:1.15,lowerWide:.55,waistDefined:.65},explain:"上半身をすっきり見せながら裾に自然な広がりを作りやすい形。"},
+    {id:"straight-dress",name:"ストレートワンピース",tags:["Iライン","シンプル"],ideal:{lowerWide:.66,balance:.62,waistDefined:.45},weights:{lowerWide:1.10,balance:.90,waistDefined:.30},explain:"縦長シルエットで全体をすっきりまとめやすいワンピース。"},
+    {id:"jeans",name:"ストレートデニム",tags:["デニム","カジュアル"],ideal:{lowerWide:.62,balance:.58,legHigh:.58},weights:{lowerWide:1,balance:.70,legHigh:.55},explain:"カジュアルでも縦ラインを作りやすく、トップスとの調整幅が広いデニム。"},
+    {id:"pleated-skirt",name:"プリーツスカート",tags:["プリーツ","動き"],ideal:{upperWide:.72,balance:.55},weights:{upperWide:1.20,balance:.55},explain:"下半身に動きと量感を足しやすく、上半身とのバランス調整に使いやすい。"}
+  ];
+
+  function normalizeFeature(f){
+    const shoulderHip=Number(f.shoulderHip||1), legRatio=Number(f.legRatio||.50);
+    const torsoRatio=Number(f.torsoRatio||.30), waistHip=Number(f.waistHip||.82);
+    return {
+      upperWide:clamp((shoulderHip-.93)/.18,0,1),
+      lowerWide:clamp((1.08-shoulderHip)/.15,0,1),
+      balance:clamp(1-Math.abs(shoulderHip-1)/.12,0,1),
+      legHigh:clamp((legRatio-.47)/.10,0,1),
+      torsoLong:clamp((torsoRatio-.27)/.09,0,1),
+      torsoCompact:clamp((.34-torsoRatio)/.07,0,1),
+      waistDefined:clamp((.86-waistHip)/.16,0,1)
+    };
+  }
+
+  function trendBoostForItem(item,trendList){
+    const names=(trendList||[]).map(x=>String(x.name||""));
+    const text=item.name+" "+item.tags.join(" ");
+    const words=["テーラード","シャツ","チェック","レザー","ロング","ワイド","ショート","ハイウエスト","デニム","リボン","レース","ブラウン","グレー","パンプス"];
+    const hits=words.filter(w=>names.some(n=>n.includes(w))&&text.includes(w));
+    return clamp(hits.length*3.5,0,10);
+  }
+
+  function preferenceBoostForItem(item,prefs={}){
+    const style=prefs.style||"", purpose=prefs.purpose||"", name=item.name;
+    const map={
+      "きれいめ":["テーラード","シャツ","ワンピース","Vネック","ストレート"],
+      "カジュアル":["デニム","ワイド","クルーネック","シャツ","カーディガン"],
+      "シンプル":["ストレート","クルーネック","シャツ","ワンピース"],
+      "ストリート":["ワイド","ショート","デニム","ロング"],
+      "フェミニン":["Aライン","ラップ","プリーツ","ワンピース","フィット"],
+      "モード":["テーラード","ストレート","Vネック","ロング"]
+    };
+    let boost=0;
+    (map[style]||[]).forEach(w=>{if(name.includes(w)) boost+=2.5;});
+    if(purpose==="通勤・仕事"&&/テーラード|シャツ|ストレート|ワンピース/.test(name)) boost+=3;
+    if(purpose==="デート"&&/Aライン|ラップ|ワンピース|フィット|プリーツ/.test(name)) boost+=3;
+    if(purpose==="イベント"&&/ワンピース|テーラード|プリーツ/.test(name)) boost+=2;
+    return clamp(boost,0,10);
+  }
+
+  function scoreItemCompatibility(item,f,prefs={},trendList=[]){
+    const nf=normalizeFeature(f); let weighted=0,totalWeight=0;
+    Object.entries(item.ideal).forEach(([key,ideal])=>{
+      const weight=Number(item.weights?.[key]||1), actual=Number(nf[key]??.5);
+      weighted+=(1-Math.min(1,Math.abs(actual-ideal)))*weight; totalWeight+=weight;
+    });
+    const fitScore=totalWeight?weighted/totalWeight*100:50;
+    const trendScore=trendBoostForItem(item,trendList);
+    const preferenceScore=preferenceBoostForItem(item,prefs);
+    const finalScore=clamp(Math.round(fitScore*.78+trendScore*.10+preferenceScore*.12),0,100);
+
+    const parts=[];
+    if(nf.upperWide>=.65&&item.tags.some(t=>/縦|Vネック|Aライン|ワイド|量感/.test(t))) parts.push("上半身とのバランスを取りやすい");
+    if(nf.lowerWide>=.65&&item.tags.some(t=>/ストレート|Iライン|シンプル/.test(t))) parts.push("下半身をすっきり見せやすい");
+    if(nf.legHigh>=.65&&item.tags.some(t=>/ハイウエスト|短丈|ショート/.test(t))) parts.push("脚の見え方を活かしやすい");
+    if(nf.torsoLong>=.65&&item.tags.some(t=>/ハイウエスト|短丈|フィット/.test(t))) parts.push("腰位置を高く見せやすい");
+    if(nf.torsoCompact>=.65&&item.tags.some(t=>/ロング|レイヤード|縦/.test(t))) parts.push("縦のラインを作りやすい");
+    if(nf.waistDefined>=.65&&item.tags.some(t=>/ウエスト|フィット|ラップ/.test(t))) parts.push("ウエストラインを活かしやすい");
+    if(!parts.length) parts.push(item.explain);
+
+    return {...item,fitScore:Math.round(fitScore),trendScore:Math.round(trendScore),preferenceScore:Math.round(preferenceScore),finalScore,reason:parts.slice(0,2).join("。")+"。"};
+  }
+
+  function calculateItemScores(f,prefs={},trendList=[]){
+    return ITEM_ARCHETYPES.map(item=>scoreItemCompatibility(item,f,prefs,trendList))
+      .sort((a,b)=>b.finalScore-a.finalScore).slice(0,5);
+  }
+
+  function renderItemScores(scores){
+    if(!itemScoreGrid) return;
+    itemScoreGrid.innerHTML=scores.map((x,i)=>`
+      <div class="item-score-card">
+        <div class="item-score-top"><div class="item-score-name">${i+1}. ${x.name}</div><div class="item-score-number">${x.finalScore}%</div></div>
+        <div class="item-score-bar"><div class="item-score-fill" style="width:${x.finalScore}%"></div></div>
+        <p class="item-score-reason">${x.reason}</p>
+        <div class="item-score-tags">${x.tags.slice(0,3).map(t=>`<span class="item-score-tag">${t}</span>`).join("")}</div>
+      </div>
+    `).join("");
+  }
+
+  function makeRecommendations(f, preferences = {}){
+    const rec=[];
+    const reasons=[];
+    const chips=[];
+    let shape="バランス型";
+    let shapeShort="肩と腰の幅が近い";
+
+    if(f.shoulderHip >= 1.08){
+      shape="上半身に幅が出やすいタイプ";
+      shapeShort="上半身の幅がやや大きめ";
+      reasons.push({
+        icon:"↕️",
+        label:"肩・腰のバランス",
+        value:"上半身寄り",
+        explain:"肩幅と腰幅の相対比から、上半身に視線が集まりやすい傾向として判定しました。"
+      });
+      rec.push("トップスは縦のラインを作るデザイン、すっきりした首元がおすすめ。");
+      rec.push("ボトムはワイド・Aラインなど、下半身にも適度なボリュームを出すとバランスを取りやすいです。");
+      chips.push("すっきりした首元","縦ライン","ワイド・Aライン");
+    }else if(f.shoulderHip <= .93){
+      shape="下半身に幅が出やすいタイプ";
+      shapeShort="下半身の幅がやや大きめ";
+      reasons.push({
+        icon:"↕️",
+        label:"肩・腰のバランス",
+        value:"下半身寄り",
+        explain:"肩幅と腰幅の相対比から、下半身に視線が集まりやすい傾向として判定しました。"
+      });
+      rec.push("トップスに色・柄・ディテールを置いて視線を上げるとバランスを取りやすいです。");
+      rec.push("ボトムはストレートや落ち感のあるシルエットが合わせやすいです。");
+      chips.push("トップスにポイント","視線を上へ","ストレート");
+    }else{
+      reasons.push({
+        icon:"↔️",
+        label:"肩・腰のバランス",
+        value:"比較的均等",
+        explain:"肩幅と腰幅の差が小さく、上下のシルエットを調整しやすい傾向です。"
+      });
+      rec.push("上下の幅が比較的近く、さまざまなシルエットを試しやすい傾向です。");
+      chips.push("シルエット自由度高め","上下のバランス重視");
+    }
+
+    if(f.legRatio >= .54){
+      reasons.push({
+        icon:"🦵",
+        label:"脚の見え方",
+        value:"脚を活かしやすい",
+        explain:"腰から足元までの比率が比較的大きく、脚のラインを活かす着こなしと相性がよさそうです。"
+      });
+      rec.push("ハイウエストや脚のラインを活かす着こなしと相性がよさそうです。");
+      chips.push("ハイウエスト","脚長見せ");
+    }else if(f.legRatio <= .47){
+      reasons.push({
+        icon:"🦵",
+        label:"脚の見え方",
+        value:"腰位置を高く見せると◎",
+        explain:"腰から足元までの比率が比較的小さく、腰位置を高く見せると全体の縦バランスを整えやすいです。"
+      });
+      rec.push("ハイウエスト＋短めトップスなど、腰位置を高く見せる着こなしがおすすめです。");
+      chips.push("ハイウエスト","短めトップス");
+    }else{
+      reasons.push({
+        icon:"🦵",
+        label:"脚の見え方",
+        value:"標準的な範囲",
+        explain:"今回の画像では、脚の見え方に強い偏りは見られませんでした。"
+      });
+    }
+
+    if(f.torsoRatio >= .34){
+      reasons.push({
+        icon:"📏",
+        label:"上半身の見え方",
+        value:"やや縦長",
+        explain:"肩から腰までの相対的な長さが大きめに見えるため、腰位置を高く見せるとまとまりやすいです。"
+      });
+      rec.push("上半身が長めに見えやすいので、腰位置を高く見せるスタイリングが有効です。");
+      chips.push("腰位置高め","トップス丈を調整");
+    }else if(f.torsoRatio <= .27){
+      reasons.push({
+        icon:"📏",
+        label:"上半身の見え方",
+        value:"ややコンパクト",
+        explain:"肩から腰までの相対的な長さが小さめに見えるため、トップス丈やレイヤードで縦のバランスを調整できます。"
+      });
+      rec.push("上半身がコンパクトに見えやすいので、トップスの丈やレイヤードで縦のバランスを調整できます。");
+      chips.push("レイヤード","縦ライン");
+    }
+
+    if(f.waistHip <= .78){
+      reasons.push({
+        icon:"◯",
+        label:"ウエストの見え方",
+        value:"ラインを作りやすい",
+        explain:"腰幅に対する中央付近の幅が比較的小さく、ウエストラインを意識した服も候補になります。"
+      });
+      rec.push("ウエストラインを軽く見せるデザインも候補にできます。");
+      chips.push("ウエストマーク","フィット＆フレア");
+    }else{
+      reasons.push({
+        icon:"▭",
+        label:"ウエストの見え方",
+        value:"直線シルエットも◎",
+        explain:"腰幅に対する中央付近の幅の差が小さめなので、直線的なシルエットも取り入れやすそうです。"
+      });
+      rec.push("直線的なシルエットも取り入れやすそうです。");
+      chips.push("ストレート","Iライン");
+    }
+
+    const trend = getTrendSuggestions(f, preferences);
+    trend.forEach(t => {
+      rec.push(`【${CURRENT_TREND_SEASON} TREND】${t.name}：${t.why}。`);
+      chips.push(t.name);
+    });
+
+    return {shape,shapeShort,reasons,rec,chips,trend};
+  }
+
+  function renderDiagnosis(r,f,q){
+    resultText.innerHTML=`
+      <p><span class="pill">${r.shape}</span></p>
+      <p>写真から見える<strong>肩・腰・脚・上半身の相対バランス</strong>を使って、「なぜその服が合いやすいか」を組み立てています。</p>
+    `;
+
+    reasonCards.innerHTML=r.reasons.map(x=>`
+      <div class="reason-card">
+        <div class="reason-icon">${x.icon}</div>
+        <div class="reason-label">${x.label}</div>
+        <div class="reason-value">${x.value}</div>
+        <div class="reason-explain">${x.explain}</div>
+      </div>
+    `).join("");
+
+    let flowText;
+    if(f.shoulderHip >= 1.08){
+      flowText = `<strong>${r.shapeShort}</strong><span class="fit-arrow">→</span>上半身をすっきり見せる<span class="fit-arrow">→</span>下半身に適度なボリューム<span class="fit-arrow">→</span>全体をバランス`;
+    }else if(f.shoulderHip <= .93){
+      flowText = `<strong>${r.shapeShort}</strong><span class="fit-arrow">→</span>上半身にポイント<span class="fit-arrow">→</span>下半身をすっきり<span class="fit-arrow">→</span>視線を上へ`;
+    }else{
+      flowText = `<strong>${r.shapeShort}</strong><span class="fit-arrow">→</span>上下の特徴を活かす<span class="fit-arrow">→</span>シルエットを調整<span class="fit-arrow">→</span>好みを優先`;
+    }
+    fitFlow.innerHTML=flowText;
+
+    whyList.innerHTML=r.reasons.slice(0,4).map(x=>`<li>${x.explain}</li>`).join("");
+    styleChips.innerHTML=r.chips.map(x=>`<span class="style-chip">${x}</span>`).join("");
+
+    const qualityScore = Math.round(q.ratio*100);
+    const shapeMargin = Math.min(1, Math.abs((f.shoulderHip || 1) - 1) / 0.18);
+    const featureClarity = Math.round(70 + shapeMargin * 18);
+    const confidence = clamp(Math.round(qualityScore * 0.62 + featureClarity * 0.38),48,96);
+
+    confidenceBox.innerHTML=`
+      <strong>診断の安定度目安 ${confidence}%</strong>
+      <div class="confidence-bar"><div class="confidence-fill" style="width:${confidence}%"></div></div>
+      <span>写真品質＋肩/腰・脚・上半身・中央ラインの複数特徴から算出した目安。医療・骨格診断の確定値ではありません。</span>
+    `;
+
+    const trendHtml = r.trend?.length
+      ? `<div class="trend-result-box">
+           <div class="trend-result-title">✨ ${CURRENT_TREND_SEASON} トレンドを取り入れるなら</div>
+           ${r.trend.slice(0,3).map(t=>`<div class="trend-result-item"><strong>${t.name}</strong><span>${t.why}</span></div>`).join("")}
+           <div class="trend-result-note">トレンドは「似合う判定」と別レイヤーで組み合わせています。</div>
+         </div>`
+      : "";
+
+    recommendations.innerHTML = trendHtml + r.rec
+      .filter(x => !x.startsWith("【"+CURRENT_TREND_SEASON+" TREND】"))
+      .map((x,i)=>
+        `<div class="recommend"><strong>${i+1}.</strong> ${x}</div>`
+      ).join("");
+
+    const itemScores=calculateItemScores(f,{
+      purpose:document.getElementById("purpose")?.value||"",
+      style:document.getElementById("style")?.value||""
+    },r.trend||[]);
+    renderItemScores(itemScores);
+    renderProductSearch(itemScores, {
+      purpose:document.getElementById("purpose")?.value||"",
+      style:document.getElementById("style")?.value||""
+    });
+    r.itemScores=itemScores;
+
+    updateShareCard(r, f);
+  }
+
+  function updateShareCard(r, f){
+    const accountName = normalizeXAccount(document.getElementById("xAccount")?.value || "") || "@your_account";
+    const reasons = Array.isArray(r?.reasons) ? r.reasons : [];
+    const recs = Array.isArray(r?.rec) ? r.rec : [];
+    const trend = Array.isArray(r?.trend) ? r.trend : [];
+
+    const balance = reasons[0]?.explain || reasons[0]?.value || "写真から見える身体バランスをチェックしました。";
+    const tip = recs.find(x => !String(x).startsWith("【"+CURRENT_TREND_SEASON+" TREND】"))
+      || "自分のバランスに合わせて、シルエットを整えるスタイリングがおすすめです。";
+
+    shareCardNickname.textContent = `${accountName}さんの診断結果`;
+    shareCardType.textContent = `💗 ${r?.shape || "あなたに似合うスタイル"}`;
+    shareCardSummary.textContent =
+      r?.shapeShort
+        ? `${r.shapeShort}。写真から見えるバランスをもとに、似合いやすい服の方向性をチェックしました。`
+        : "写真から見えるバランスをもとに、似合いやすい服の方向性をチェックしました。";
+
+    shareCardTrend.textContent = trend.length
+      ? trend.slice(0,2).map(t => `${t.name}（${t.why}）`).join(" / ")
+      : "今季トレンドを体型バランスに合わせて提案";
+
+    shareCardBalance.textContent = balance;
+    shareCardTip.textContent = tip;
+
+    latestShareDiagnosis = {
+      accountName,
+      shape: r?.shape || "あなたに似合うスタイル",
+      shapeShort: r?.shapeShort || "",
+      balance,
+      tip,
+      trend: trend.slice(0,2).map(t => t.name)
+    };
+
+    shareCardWrap.hidden = false;
+  }
+
+  function getShareText(){
+    if(!latestShareDiagnosis) return "";
+    const d = latestShareDiagnosis;
+    return [
+      `✨ AI STYLING CHECK`,
+      `${d.accountName}さんの診断結果`,
+      `💗 ${d.shape}`,
+      d.shapeShort ? `・${d.shapeShort}` : "",
+      d.trend?.length ? `✨ 今季トレンド：${d.trend.join(" / ")}` : "",
+      `💡 ${d.tip}`,
+      "",
+      `#AIスタイリング #ファッション診断 #2026秋冬`
+    ].filter(Boolean).join("\n");
+  }
+
+  async function downloadShareCard(){
+    if(!window.html2canvas){
+      alert("画像保存機能の読み込みに失敗しました。ページを再読み込みしてもう一度お試しください。");
+      return;
+    }
+
+    const originalText = downloadShareCardBtn.textContent;
+    downloadShareCardBtn.disabled = true;
+    downloadShareCardBtn.textContent = "📸 画像を作成中…";
+
+    try{
+      const canvas = await html2canvas(shareCard, {
+        backgroundColor: null,
+        scale: Math.min(3, Math.max(2, window.devicePixelRatio || 1)),
+        useCORS: true
+      });
+
+      const link = document.createElement("a");
+      link.download = "ai-styling-check-result.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }catch(err){
+      console.error(err);
+      alert("診断カードの画像保存に失敗しました。もう一度お試しください。");
+    }finally{
+      downloadShareCardBtn.disabled = false;
+      downloadShareCardBtn.textContent = originalText;
+    }
+  }
+
+  async function copyShareText(){
+    const text = getShareText();
+    if(!text) return;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      const originalText = copyShareTextBtn.textContent;
+      copyShareTextBtn.textContent = "✅ コピーしました";
+      setTimeout(()=>{ copyShareTextBtn.textContent = originalText; }, 1600);
+    }catch(err){
+      window.prompt("以下の結果をコピーしてください：", text);
+    }
+  }
+
+  downloadShareCardBtn.addEventListener("click", downloadShareCard);
+  copyShareTextBtn.addEventListener("click", copyShareText);
+
+  function makePayload(f,q){
+    return {
+      version:"v16",
+      x_account:normalizeXAccount(xAccount.value.trim()),
+      analysis:"browser-side MediaPipe Pose Landmarker",
+      quality:{
+        score:q.level,
+        ratio:+q.ratio.toFixed(2),
+        blocking:q.blocking
+      },
+      relative_features:f,
+      purpose:$("purpose").value,
+      style:$("style").value,
+      note:"数値は画像内の相対座標から算出した推定値。実寸ではない。"
+    };
+  }
+
+  async function initPose(){
+    try{
+      engineStatus.textContent="解析エンジンを読み込み中…";
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm"
+      );
+
+      try{
+        poseLandmarker = await PoseLandmarker.createFromOptions(vision,{
+          baseOptions:{
+            modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task",
+            delegate:"GPU"
+          },
+          runningMode:"IMAGE",
+          numPoses:1,
+          minPoseDetectionConfidence:.35,
+          minPosePresenceConfidence:.35,
+          minTrackingConfidence:.35
+        });
+      }catch(e){
+        poseLandmarker = await PoseLandmarker.createFromOptions(vision,{
+          baseOptions:{
+            modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task",
+            delegate:"CPU"
+          },
+          runningMode:"IMAGE",
+          numPoses:1,
+          minPoseDetectionConfidence:.35,
+          minPosePresenceConfidence:.35,
+          minTrackingConfidence:.35
+        });
+      }
+
+      engineStatus.textContent="✅ 解析エンジン準備完了";
+      engineStatus.className="small q-ok";
+    }catch(err){
+      console.error(err);
+      engineStatus.textContent="❌ 解析エンジンの読み込みに失敗しました。インターネット接続/CDNアクセスを確認してください。";
+      engineStatus.className="small danger";
+    }
+  }
+
+  function handleFile(file){
+    if(!file) return;
+
+    if(!/^image\/(jpeg|png|webp)$/.test(file.type)){
+      alert("JPG / PNG / WEBP の画像を選択してください。");
+      return;
+    }
+
+    if(currentImageUrl) URL.revokeObjectURL(currentImageUrl);
+    currentImageUrl=URL.createObjectURL(file);
+
+    preview.onload=()=>{
+      previewWrap.style.display="block";
+      resizeCanvas();
+      qualityBox.style.display="block";
+      qualityBox.className="status";
+      qualitySummary.innerHTML="写真を確認中…";
+      qualityList.innerHTML="";
+      scoreEl.textContent="…";
+      analyzeBtn.disabled=true;
+      nextStep.style.display="none";
+
+      if(!poseLandmarker){
+        qualitySummary.innerHTML='<span class="q-warn">解析エンジンの準備がまだ完了していません。</span>';
+        nextStep.style.display="block";
+        nextStepText.textContent="少し待ってから写真を選び直してください。";
+        return;
+      }
+
+      try{
+        const detection=poseLandmarker.detect(preview);
+        if(!detection.landmarks || detection.landmarks.length===0){
+          currentLandmarks=null;
+          qualityBox.className="status ng";
+          scoreEl.textContent="☆☆☆☆☆";
+          qualitySummary.innerHTML='<span class="danger">❌ 人体を検出できませんでした。撮影ガイドに沿って撮り直してください。</span>';
+          qualityList.innerHTML='<li class="q-ng">⚠️ 全身が写っている、明るい正面写真を試してください。</li>';
+          nextStep.style.display="block";
+          nextStepText.textContent="① 写真を撮り直す → ② もう一度アップロード → ③ 品質チェックを確認";
+          return;
+        }
+
+        currentLandmarks=detection.landmarks[0];
+        lastQuality=runQualityChecks(currentLandmarks);
+        qualityBox.className="status " + (lastQuality.blocking ? "warn" : "ok");
+        renderQuality(lastQuality);
+        drawPose(currentLandmarks);
+
+        analyzeBtn.disabled=false;
+        nextStep.style.display="block";
+
+        if(lastQuality.blocking){
+          nextStepText.textContent="このまま解析もできますが、撮影ガイドに沿って撮り直すと結果が安定しやすくなります。";
+        }else{
+          nextStepText.textContent="写真の準備OK！「写真を解析する」を押すと、体型の見え方から服選びを診断します。";
+        }
+      }catch(err){
+        console.error(err);
+        qualityBox.className="status ng";
+        qualitySummary.innerHTML='<span class="danger">❌ 写真の解析中にエラーが発生しました。</span>';
+        qualityList.innerHTML='<li class="q-ng">エラー詳細：'+String(err.message||err)+'</li>';
+        nextStep.style.display="block";
+        nextStepText.textContent="写真を選び直してもう一度試してください。";
+      }
+    };
+    preview.src=currentImageUrl;
+  }
+
+  fileInput.addEventListener("change",()=>{
+    handleFile(fileInput.files?.[0]);
+  });
+
+  uploadArea.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+    uploadArea.classList.add("dragover");
+  });
+
+  uploadArea.addEventListener("dragleave",()=>{
+    uploadArea.classList.remove("dragover");
+  });
+
+  uploadArea.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    uploadArea.classList.remove("dragover");
+    const file=e.dataTransfer.files?.[0];
+    if(file){
+      try{
+        const dt=new DataTransfer();
+        dt.items.add(file);
+        fileInput.files=dt.files;
+      }catch(_){}
+      handleFile(file);
+    }
+  });
+
+  window.addEventListener("resize",()=>{
+    if(currentLandmarks) drawPose(currentLandmarks);
+  });
+
+  function normalizeXAccount(value){
+    const v=(value||"").trim();
+    if(!v) return "";
+    return v.startsWith("@") ? v : "@"+v;
+  }
+
+  async function saveToSupabase(file, payload, diagnosis){
+    const nickname = document.getElementById('nickname')?.value?.trim() || '';
+    const xAccount = document.getElementById('xAccount')?.value?.trim() || '';
+
+    if (!nickname) {
+      throw new Error('ニックネームを入力してください');
+    }
+    if (!xAccount) {
+      throw new Error('Xアカウント名を入力してください');
+    }
+
+
+    if(!supabaseReady){
+      return {
+        ok:false,
+        skipped:true,
+        message:"Supabase未設定です。HTML内のSUPABASE_URL / SUPABASE_ANON_KEYを設定すると保存できます。"
+      };
+    }
+
+    if(!file){
+      throw new Error("写真ファイルが見つかりません。");
+    }
+
+    // 元のファイル名はDBにそのまま保存し、Storage側のパスだけ一意にします。
+    // 同じ名前の写真を何度もテストしても、上書き権限(upsert/update)に依存しません。
+    const safeName = file.name || "photo";
+    const storagePath = `${Date.now()}_${crypto.randomUUID()}_${safeName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(storagePath, file, {
+        contentType:file.type || "application/octet-stream",
+        upsert:false
+      });
+
+    if(uploadError){
+      throw new Error(`写真アップロードに失敗しました：${uploadError.message}`);
+    }
+
+    const row={
+      nickname: nickname,
+      x_account:normalizeXAccount(xAccount),
+      photo_path:storagePath,
+      photo_filename:safeName,
+      photo_mime_type:file.type || null,
+      diagnosis_type:diagnosis.shape,
+      diagnosis_summary:diagnosis.shapeShort,
+      diagnosis_reasons:diagnosis.reasons,
+      recommendations:diagnosis.rec,
+      style_chips:diagnosis.chips,
+      analysis_features:payload.relative_features,
+      quality:payload.quality,
+      purpose:payload.purpose,
+      style:payload.style,
+      app_version:"v16"
+    };
+
+    // .select() は付けない。
+    // これにより styling_diagnoses の SELECT RLS ポリシーを公開する必要がありません。
+    const { error:dbError } = await supabase
+      .from(DIAGNOSIS_TABLE)
+      .insert(row);
+
+    if(dbError){
+      // DB保存に失敗した場合、写真だけ残る可能性があります。
+      // テスト版では原因が分かりやすいよう、そのままエラー表示します。
+      throw new Error(`診断結果の保存に失敗しました：${dbError.message}`);
+    }
+
+    return {
+      ok:true,
+      photo_path:storagePath,
+      photo_filename:safeName
+    };
+  }
+
+  analyzeBtn.addEventListener("click",async()=>{
+    if(!currentLandmarks) return;
+    const nicknameValue = document.getElementById("nickname")?.value?.trim() || "";
+    const xAccountValue = xAccount.value.trim();
+    if(!nicknameValue){
+      document.getElementById("nickname")?.focus();
+      alert("後の診断カードで使用するためXアカウント名とパスワードを入力してください。");
+      return;
+    }
+    if(!xAccountValue){
+      xAccount.focus();
+      alert("後の診断カードで使用するためXアカウント名とパスワードを入力してください。");
+      return;
+    }
+
+    const f=calculateFeatures(currentLandmarks);
+    const preferences = {
+      purpose: $("purpose").value,
+      style: $("style").value
+    };
+    const r=makeRecommendations(f, preferences);
+    const payload=makePayload(f,lastQuality);
+
+    analyzeBtn.disabled=true;
+    analyzeBtn.textContent="☁️ 保存して診断中…";
+
+    try{
+      const saveResult=await saveToSupabase(fileInput.files?.[0],payload,r);
+      result.style.display="block";
+      renderDiagnosis(r,f,lastQuality);
+      jsonOutput.textContent=JSON.stringify({...payload,storage:saveResult},null,2);
+
+      if(saveResult.skipped){
+        engineStatus.textContent="✅ 診断成功";
+        engineStatus.className="small q-warn";
+      }else{
+        engineStatus.textContent="✅ 診断成功";
+        engineStatus.className="small q-ok";
+      }
+    }catch(err){
+      console.error(err);
+      result.style.display="block";
+      renderDiagnosis(r,f,lastQuality);
+      jsonOutput.textContent=JSON.stringify(payload,null,2);
+      engineStatus.textContent="✅ 診断成功："+(err.message||err);
+      engineStatus.className="small danger";
+    }finally{
+      analyzeBtn.disabled=false;
+      analyzeBtn.textContent="💗 診断してみる";
+    }
+
+    result.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+
+  resetBtn.addEventListener("click",()=>{
+    if(currentImageUrl) URL.revokeObjectURL(currentImageUrl);
+    currentImageUrl=null;
+    currentLandmarks=null;
+    lastQuality=null;
+    fileInput.value="";
+    preview.removeAttribute("src");
+    previewWrap.style.display="none";
+    qualityBox.style.display="none";
+    nextStep.style.display="none";
+    result.style.display="none";
+    analyzeBtn.disabled=true;
+    overlay.getContext("2d").clearRect(0,0,overlay.width,overlay.height);
+  });
+
+  initPose();
+</script>
+</body>
+</html>
